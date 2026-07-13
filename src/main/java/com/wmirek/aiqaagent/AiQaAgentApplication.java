@@ -1,4 +1,4 @@
-package ai_qa_agent;
+package com.wmirek.aiqaagent;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
