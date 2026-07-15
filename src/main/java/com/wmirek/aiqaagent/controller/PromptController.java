@@ -3,6 +3,7 @@ package com.wmirek.aiqaagent.controller;
 import com.wmirek.aiqaagent.model.request.PromptRequest;
 import com.wmirek.aiqaagent.model.response.PromptResponse;
 import com.wmirek.aiqaagent.service.PromptService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ public class PromptController {
     }
 
     @PostMapping
-    public PromptResponse generateResponse(@RequestBody PromptRequest promptRequest) {
+    public PromptResponse generateResponse(@Valid @RequestBody PromptRequest promptRequest) {
         return promptService.generate(promptRequest.prompt());
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -23,7 +23,7 @@ public class PromptControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void shouldGeneratePromptResponse() throws Exception {
+    void shouldGeneratePromptResponse() throws Exception {
         when(promptService.generate("Generate login API tests"))
                 .thenReturn(new PromptResponse("Mock response"));
 
@@ -31,11 +31,56 @@ public class PromptControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content("""
                                 {
-                                "prompt": "Generate login API tests"
+                                    "prompt": "Generate login API tests"
                                 }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response")
                         .value("Mock response"));
+
+        verify(promptService)
+                .generate("Generate login API tests");
+    }
+
+    @Test
+    void shouldReturnBadRequestIfPromptIsBlank() throws Exception {
+        mockMvc.perform(post("/api/v1/prompts")
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "prompt": ""
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(promptService);
+    }
+
+    @Test
+    void shouldReturnBadRequestIfPromptContainsOnlySpaces() throws Exception {
+        mockMvc.perform(post("/api/v1/prompts")
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "prompt": "     "
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(promptService);
+    }
+
+    @Test
+    void shouldReturnBadRequestIfPromptIsNull() throws Exception {
+        mockMvc.perform(post("/api/v1/prompts")
+                        .contentType(APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "prompt": null
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(promptService);
     }
 }
