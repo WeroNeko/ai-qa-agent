@@ -1,4 +1,4 @@
-package ai_qa_agent;
+package com.wmirek.aiqaagent;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
